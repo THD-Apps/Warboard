@@ -354,12 +354,18 @@
 								{#if department.jobs.length > 1}
 									<!-- JOB TITLE -->
 									<div
-										class="border- border-r border-b border-black bg-gray-400 text-center font-bold"
+										class="border-l border-r border-b border-black bg-gray-400 text-center font-bold"
 									>
 										{job.name ?? job[1]}
 									</div>
 								{/if}
 								{#each job.shifts as shift}
+									{@const diff = moment(
+										'2023-12-12 ' + convertToMilitaryTime(shift[2].split('-')[1])
+									).diff(
+										moment('2023-12-12 ' + convertToMilitaryTime(shift[2].split('-')[0])),
+										'minutes'
+									)}
 									<div class="grid grid-cols-12 border-b border-black">
 										<div class="col-span-5 grid grid-cols-12">
 											<div class="px-2 border-l border-black uppercase col-span-6 py-1">
@@ -379,40 +385,16 @@
 											<div class="col-span-7 grid grid-cols-3">
 												<div class="px-2 border-l border-black uppercase py-1">&nbsp;</div>
 												<div
-													class:bg-gray-300={moment(
-														'2023-12-12 ' + convertToMilitaryTime(shift[2].split('-')[1])
-													).diff(
-														moment('2023-12-12 ' + convertToMilitaryTime(shift[2].split('-')[0])),
-														'minutes'
-													) <= 390}
+													class:bg-gray-300={diff < 0 ? diff + 1440 <= 390 : diff <= 390}
 													class="px-2 border-l border-black uppercase py-1 text-center"
 												>
-													{moment(
-														'2023-12-12 ' + convertToMilitaryTime(shift[2].split('-')[1])
-													).diff(
-														moment('2023-12-12 ' + convertToMilitaryTime(shift[2].split('-')[0])),
-														'minutes'
-													) <= 390
-														? 'N/A'
-														: ''}
+													{diff > 0 ? (diff <= 390 ? 'N/A' : '') : diff + 1440 <= 390 ? 'N/A' : ''}
 												</div>
 												<div
-													class:bg-gray-300={moment(
-														'2023-12-12 ' + convertToMilitaryTime(shift[2].split('-')[1])
-													).diff(
-														moment('2023-12-12 ' + convertToMilitaryTime(shift[2].split('-')[0])),
-														'minutes'
-													) < 360}
+													class:bg-gray-300={diff < 0 ? diff + 1440 < 360 : diff < 360}
 													class="px-2 border-l border-black uppercase py-1 text-center"
 												>
-													{moment(
-														'2023-12-12 ' + convertToMilitaryTime(shift[2].split('-')[1])
-													).diff(
-														moment('2023-12-12 ' + convertToMilitaryTime(shift[2].split('-')[0])),
-														'minutes'
-													) < 360
-														? 'N/A'
-														: ''}
+													{diff > 0 ? (diff < 360 ? 'N/A' : '') : diff + 1440 < 360 ? 'N/A' : ''}
 												</div>
 											</div>
 											<div class="col-span-5">
